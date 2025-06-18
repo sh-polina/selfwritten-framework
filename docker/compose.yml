@@ -1,0 +1,78 @@
+
+services:
+  nginx:
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    build: nginx
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ../app:/app
+    depends_on:
+      - php-fpm
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  php-fpm:
+    container_name: ${COMPOSE_PROJECT_NAME}_php
+    build:
+      context: php
+      target: alpine-fpm
+    image: my-php:alpine
+    user: "1000:1000"
+    volumes:
+      - ../app:/app
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+    depends_on:
+      - db
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      XDEBUG_MODE: debug
+      XDEBUG_START_WITH_REQUEST: yes
+      XDEBUG_CLIENT_HOST: 172.17.0.1
+      XDEBUG_CLIENT_PORT: 9003
+      XDEBUG_LOG: /tmp/xdebug.log
+      XDEBUG_LOG_LEVEL: 7
+
+  db:
+    container_name: ${COMPOSE_PROJECT_NAME}_db
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - app-network
+    restart: unless-stopped
+  db-mysql:
+    container_name: ${COMPOSE_PROJECT_NAME}_mysql
+    image: mysql
+    environment:
+      MYSQL_USER: ${POSTGRES_USER}
+      MYSQL_PASSWORD: ${POSTGRES_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${POSTGRES_PASSWORD}
+      MYSQL_DB: ${POSTGRES_DB}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge

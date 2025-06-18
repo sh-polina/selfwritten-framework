@@ -1,0 +1,10 @@
+app/vendor/
+app/config/
+*.sql
+*.env
+docker/compose.override.yml
+.php-cs-fixer.cache
+/.idea/
+app/resources/userUploaded/
+app/resources/FakerResources/
+docker/xdebug.ini

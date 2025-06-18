@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -xeuo pipefail
+
+docker-php-ext-configure gd --with-jpeg
+docker-php-ext-install gd intl pdo_pgsql bcmath opcache
+
+pecl install imagick || (
+    mkdir -p /tmp/imagick-src
+    curl -L -o /tmp/imagick-src/imagick.tgz "https://pecl.php.net/get/imagick"
+    tar -xzf /tmp/imagick-src/imagick.tgz -C /tmp/imagick-src --strip-components=1
+    cd /tmp/imagick-src
+    sed -i '/php_strtolower/d' imagick.c
+    sed -i '606i char *result = estrndup(Z_STRVAL_P(retval), Z_STRLEN_P(retval)); for (int i = 0; i < Z_STRLEN_P(retval); i++) result[i] = tolower(result[i]);' imagick.c
+    phpize
+    ./configure
+    make
+    make install
+    cd ..
+    rm -rf /tmp/imagick-src
+)
+
+pecl install xdebug
+docker-php-ext-enable opcache imagick xdebug
+curl -L -o /usr/local/bin/composer https://getcomposer.org/composer-stable.phar
+chmod +x /usr/local/bin/composer
