@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\App\Domain\Filter;
 
-use Palina\App\Domain\Ports\FilterBuilderInterface;
+use Palina\App\Domain\Ports\Filter\FilterBuilderInterface;
 
 class FilterBuilder implements FilterBuilderInterface
 {
     private array $params = [];
     private array $conditions = [];
 
-    public function applyFilters(array $getParams): FilterBuilder
+    public function createFilterQuery(array $getParams): FilterBuilder
     {
         $filters = [
             'country' => '=',

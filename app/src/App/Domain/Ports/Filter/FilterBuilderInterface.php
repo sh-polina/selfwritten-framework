@@ -1,10 +1,12 @@
 <?php
 
-namespace Palina\App\Domain\Ports;
+declare(strict_types=1);
+
+namespace Palina\App\Domain\Ports\Filter;
 
 interface FilterBuilderInterface
 {
-    public function applyFilters(array $getParams): self;
+    public function createFilterQuery(array $getParams): self;
 
     public function getParams(): array;
 

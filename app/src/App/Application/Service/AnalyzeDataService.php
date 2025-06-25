@@ -1,32 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\App\Application\Service;
 
-use Palina\App\Domain\Ports\UserHydratorInterface;
-use Palina\App\Domain\Ports\FilterBuilderInterface;
-use Palina\App\Domain\Repository\UserRepositoryInterface;
+use Palina\App\Domain\Ports\Filter\FilterBuilderInterface;
+use Palina\App\Domain\Ports\Hydrator\User\UserHydratorInterface;
+use Palina\App\Domain\Ports\Repository\UserRepositoryInterface;
 
 class AnalyzeDataService
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
-        private UserHydratorInterface   $userHydrator,
-        private FilterBuilderInterface  $filterBuilder,
+        private UserHydratorInterface $userHydrator,
+        private FilterBuilderInterface $filterBuilder,
     ) {
     }
 
-    public function handle(array $getParams): array
+    public function handle(array $getParams): \Generator
     {
-        $usersArray = [];
+        $filter = $this->filterBuilder->createFilterQuery($getParams);
 
-        $filter = $this->filterBuilder->applyFilters($getParams);
-
-        $users = $this->userRepository->filter($filter);
-
-        foreach ($users as $user) {
-            $usersArray[] = $this->userHydrator->hydrate($user);
+        foreach ($this->userRepository->findAllByFilter($filter) as $user) {
+            yield $this->userHydrator->hydrate($user);
         }
-
-        return $usersArray;
     }
 }

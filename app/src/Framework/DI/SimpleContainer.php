@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\Framework\DI;
 
+use Palina\Framework\Exceptions\DI\DependencyNotFoundException;
 use Psr\Container\ContainerInterface;
 
 class SimpleContainer implements ContainerInterface

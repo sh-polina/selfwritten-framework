@@ -1,63 +1,71 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\App\Domain\Entity;
 
 class User
 {
     public function __construct(
-        private ?string $country,
-        private ?string $city,
-        private ?bool $isActive,
-        private ?string $gender,
-        private ?string $birthDate,
-        private ?float $salary,
-        private ?bool $hasChildren,
-        private ?string $familyStatus,
-        private ?string $registrationDate
+        private ?int $id = null,
+        private ?string $country = null,
+        private ?string $city = null,
+        private bool $isActive = false,
+        private ?string $gender = null,
+        private ?\DateTimeImmutable $birthDate = null,
+        private ?float $salary = null,
+        private bool $hasChildren = false,
+        private ?string $familyStatus = null,
+        private ?\DateTimeImmutable $registrationDate = null,
     ) {
     }
 
-    public function getCountry(): string
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getCountry(): ?string
     {
         return $this->country;
     }
 
-    public function getCity(): string
+    public function getCity(): ?string
     {
         return $this->city;
     }
 
-    public function isActive(): bool
+    public function isActive(): ?bool
     {
         return $this->isActive;
     }
 
-    public function getGender(): string
+    public function getGender(): ?string
     {
         return $this->gender;
     }
 
-    public function getBirthDate(): string
+    public function getBirthDate(): ?\DateTimeImmutable
     {
         return $this->birthDate;
     }
 
-    public function getSalary(): float
+    public function getSalary(): ?float
     {
         return $this->salary;
     }
 
-    public function hasChildren(): bool
+    public function hasChildren(): ?bool
     {
         return $this->hasChildren;
     }
 
-    public function getFamilyStatus(): string
+    public function getFamilyStatus(): ?string
     {
         return $this->familyStatus;
     }
 
-    public function getRegistrationDate(): string
+    public function getRegistrationDate(): ?\DateTimeImmutable
     {
         return $this->registrationDate;
     }

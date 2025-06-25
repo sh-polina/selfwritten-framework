@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\App\Infrastructure\File;
 
 use Faker\Factory;
@@ -9,7 +11,7 @@ class FakerCSV
     public function fakeCSV(int $rowCount): void
     {
         $faker = Factory::create();
-        $csvFilePath = dirname(__DIR__, 4) . '/resources/FakerResources/user-data.csv';
+        $csvFilePath = dirname(__DIR__, 4).'/resources/FakerResources/user-data.csv';
         $file = fopen($csvFilePath, 'w');
         $header = ['country', 'city', 'isActive', 'gender', 'birthDate', 'salary', 'hasChildren', 'familyStatus', 'registrationDate'];
         fputcsv($file, $header);

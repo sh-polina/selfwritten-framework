@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\App\Infrastructure\Http\Controller;
 
 use Palina\App\Application\Service\ParseDataService;

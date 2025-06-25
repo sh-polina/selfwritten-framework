@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\App\Infrastructure\File;
 
 class CsvRowGenerator
@@ -8,7 +10,7 @@ class CsvRowGenerator
     {
     }
 
-    public function generate(\SplFileObject $file): \Generator
+    public function generateRow(\SplFileObject $file): \Generator
     {
         $header = $file->fgetcsv();
         while ($row = $file->fgetcsv()) {

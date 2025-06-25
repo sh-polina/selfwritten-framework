@@ -1,23 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\App\Infrastructure\Repository\Database;
 
 use Palina\App\Domain\Entity\User;
-use Palina\App\Domain\Filter\FilterBuilder;
-use Palina\App\Domain\Ports\UserDenormalizerInterface;
-use Palina\App\Domain\Ports\UserHydratorInterface;
-use Palina\App\Domain\Repository\UserRepositoryInterface;
+use Palina\App\Domain\Ports\Denormalizer\User\UserDenormalizerInterface;
+use Palina\App\Domain\Ports\Filter\FilterBuilderInterface;
+use Palina\App\Domain\Ports\Hydrator\User\UserHydratorInterface;
+use Palina\App\Domain\Ports\Repository\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
     public function __construct(
-        private \PDO                      $pdo,
-        private UserHydratorInterface     $userHydrator,
+        private \PDO $pdo,
+        private UserHydratorInterface $userHydrator,
         private UserDenormalizerInterface $userDenormaliser,
     ) {
     }
 
-    public function filter(FilterBuilder $filterBuilder): array
+    public function findAllByFilter(FilterBuilderInterface $filterBuilder): \Generator
     {
         $query = 'SELECT * FROM users';
 
@@ -27,15 +29,9 @@ class UserRepository implements UserRepositoryInterface
 
         $statement = $this->pdo->prepare($query);
         $statement->execute($filterBuilder->getParams());
-
-        $rows = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $usersArray = [];
-
-        foreach ($rows as $row) {
-            $usersArray[] = $this->userDenormaliser->denormalize($row);
+        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+            yield $this->userDenormaliser->denormalize($row);
         }
-
-        return $usersArray;
     }
 
     public function save(User $user): void

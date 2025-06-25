@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Palina\App\Infrastructure\Http\Controller;
 
 use Palina\App\Application\Service\AnalyzeDataService;
@@ -12,6 +14,6 @@ class AnalyzeController
 
     public function analyze(): array
     {
-        return $this->analyzeDataService->handle($_GET);
+        return iterator_to_array($this->analyzeDataService->handle($_GET));
     }
 }
